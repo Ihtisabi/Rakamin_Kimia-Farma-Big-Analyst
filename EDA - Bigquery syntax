@@ -1,0 +1,225 @@
+-- Average branch ratings
+SELECT
+  AVG(rating_cabang) AS avg_branch_rating
+FROM
+  kimia_farma.analysis_table;
+
+-- Average transaction ratings
+SELECT
+  AVG(rating_transaksi) AS avg_transaction_rating
+FROM
+  kimia_farma.analysis_table;
+
+-- Total branches
+SELECT
+  COUNT(DISTINCT branch_id) AS total_branches
+FROM
+  kimia_farma.analysis_table;
+
+-- Total provinces
+SELECT
+  COUNT(DISTINCT provinsi) AS total_provinces
+FROM
+  kimia_farma.analysis_table;
+
+-- Total cities
+SELECT
+  COUNT(DISTINCT kota) AS total_cities
+FROM
+  kimia_farma.analysis_table;
+
+-- Total transactions
+SELECT
+  COUNT(transaction_id) AS total_transactions
+FROM
+  kimia_farma.analysis_table;
+
+-- Total net sales
+SELECT
+  SUM(nett_sales) AS total_net_sales
+FROM
+  kimia_farma.analysis_table;
+
+-- Total net profit
+SELECT
+  SUM(nett_profit) AS total_net_profit
+FROM
+  kimia_farma.analysis_table;
+
+-- Branch list (branch_name, kota, count(branch_id))
+SELECT
+  branch_name,
+  kota,
+  COUNT(branch_id) AS branch_count
+FROM
+  kimia_farma.analysis_table
+GROUP BY
+  branch_name, kota;
+
+-- Sales revenue per year
+SELECT
+  EXTRACT(YEAR FROM date) AS year,
+  SUM(nett_sales) AS total_sales_revenue
+FROM
+  kimia_farma.analysis_table
+GROUP BY
+  year
+ORDER BY
+  year;
+
+-- Sales revenue per month-year
+SELECT
+  EXTRACT(YEAR FROM date) AS year,
+  EXTRACT(MONTH FROM date) AS month,
+  SUM(nett_sales) AS total_sales_revenue
+FROM
+  kimia_farma.analysis_table
+GROUP BY
+  year, month
+ORDER BY
+  year, month;
+
+-- Top 10 branch net profit by province
+WITH branch_profit AS (
+  SELECT
+    branch_name,
+    provinsi,
+    SUM(nett_profit) AS total_net_profit
+  FROM
+    kimia_farma.analysis_table
+  GROUP BY
+    branch_name, provinsi
+)
+SELECT
+  branch_name,
+  provinsi,
+  total_net_profit
+FROM
+  branch_profit
+WHERE
+  provinsi IS NOT NULL
+ORDER BY
+  total_net_profit DESC
+LIMIT 10;
+
+-- Top 10 branch net sales by province
+WITH branch_sales AS (
+  SELECT
+    branch_name,
+    provinsi,
+    SUM(nett_sales) AS total_net_sales
+  FROM
+    kimia_farma.analysis_table
+  GROUP BY
+    branch_name, provinsi
+)
+SELECT
+  branch_name,
+  provinsi,
+  total_net_sales
+FROM
+  branch_sales
+WHERE
+  provinsi IS NOT NULL
+ORDER BY
+  total_net_sales DESC
+LIMIT 10;
+
+-- Branch transaction distribution by branch_name
+SELECT
+  branch_name,
+  COUNT(transaction_id) AS total_transactions
+FROM
+  kimia_farma.analysis_table
+GROUP BY
+  branch_name
+ORDER BY
+  total_transactions DESC;
+
+-- Top 10 branch transactions by province
+WITH branch_transactions AS (
+  SELECT
+    branch_name,
+    provinsi,
+    COUNT(transaction_id) AS total_transactions
+  FROM
+    kimia_farma.analysis_table
+  GROUP BY
+    branch_name, provinsi
+)
+SELECT
+  branch_name,
+  provinsi,
+  total_transactions
+FROM
+  branch_transactions
+WHERE
+  provinsi IS NOT NULL
+ORDER BY
+  total_transactions DESC
+LIMIT 10;
+
+-- Net profit and net sales by branch
+SELECT
+  branch_name,
+  SUM(nett_sales) AS total_net_sales,
+  SUM(nett_profit) AS total_net_profit
+FROM
+  kimia_farma.analysis_table
+GROUP BY
+  branch_name
+ORDER BY
+  total_net_sales DESC, total_net_profit DESC;
+
+-- Top 5 branches with highest ratings (5) but lowest transaction ratings
+WITH branch_ratings AS (
+  SELECT
+    branch_name,
+    rating_cabang,
+    rating_transaksi
+  FROM
+    kimia_farma.analysis_table
+)
+SELECT
+  branch_name,
+  rating_cabang,
+  rating_transaksi
+FROM
+  branch_ratings
+WHERE
+  rating_cabang = 5
+ORDER BY
+  rating_transaksi ASC
+LIMIT 5;
+
+-- Branch transaction ratings across discount percentages
+WITH branch_discount_ratings AS (
+  SELECT
+    branch_name,
+    discount_percentage,
+    AVG(rating_transaksi) AS avg_transaction_rating
+  FROM
+    kimia_farma.analysis_table
+  GROUP BY
+    branch_name, discount_percentage
+)
+SELECT
+  branch_name,
+  discount_percentage,
+  avg_transaction_rating
+FROM
+  branch_discount_ratings
+ORDER BY
+  branch_name, discount_percentage;
+
+-- Net profit and net sales by branch rating
+SELECT
+  rating_cabang,
+  SUM(nett_sales) AS total_net_sales,
+  SUM(nett_profit) AS total_net_profit
+FROM
+  kimia_farma.analysis_table
+GROUP BY
+  rating_cabang
+ORDER BY
+  rating_cabang;
