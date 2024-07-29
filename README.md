@@ -45,7 +45,8 @@ In this project, you need to create a performance analysis dashboard for Kimia F
 </pre>
 
 ### Creating Analysis Table
+![Cuplikan layar 2024-07-29 163158](https://github.com/user-attachments/assets/618702f6-a31a-4708-a060-769f1dfad15e)
 
 ### Dashboard
 [Looker Studio Dashboard](https://lookerstudio.google.com/reporting/9421ffd3-bcd3-495e-896e-67df5bb3370f)
- ![Dashboard]("C:\Users\ljhab\Downloads\Sertifikat\Rakamin_KF_Analytics_Suci_page-0001.jpg")
+![Rakamin_KF_Analytics_Suci_page-0001](https://github.com/user-attachments/assets/b95b42b0-5e8d-4ca9-a33a-54fe01c5c102)
